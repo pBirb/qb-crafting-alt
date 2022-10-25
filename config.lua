@@ -1,5 +1,45 @@
 Config = {}
 
+Config.AdvanceGarageCrafting = {
+    ['location'] = vector3(98.91, 3734.36, 39.59),
+    ["items"] = {
+
+        [1] = {
+            name = "nitrous",
+            amount = 50,
+            info = {},
+            costs = {
+                ["metalscrap"] = 200,
+                ["steel"] = 200,
+                ["rubber"] = 200,
+            },
+            type = "item",
+            slot = 1,
+            threshold = 0,
+            points = 1,
+        },
+
+        [2] = {
+            name = "harness",
+            amount = 50,
+            info = {},
+            costs = {
+                ["metalscrap"] = 200,
+                ["steel"] = 200,
+                ["rubber"] = 200,
+            },
+            type = "item",
+            slot = 2,
+            threshold = 0,
+            points = 1,
+
+        },
+    }
+
+}
+
+
+
 Config.AttachmentCrafting = {
     ['location'] = vector3(88.91, 3743.88, 40.77), 
     ["items"] = {

@@ -73,6 +73,34 @@ Citizen.CreateThread(function()
 	while true do
 		local pos = GetEntityCoords(PlayerPedId())
 		local inRange = false
+		local distance = #(pos - vector3(Config.AdvanceGarageCrafting["location"].x, Config.AdvanceGarageCrafting["location"].y, Config.AdvanceGarageCrafting["location"].z))
+
+		if distance < 10 then
+			inRange = true
+			if distance < 1.5 then
+				DrawText3D(Config.AdvanceGarageCrafting["location"].x, Config.AdvanceGarageCrafting["location"].y, Config.AdvanceGarageCrafting["location"].z, "~g~E~w~ - Craft")
+				if IsControlJustPressed(0, 38) then
+					local crafting = {}
+					crafting.label = "Crafting"
+					crafting.items = GetAGThreshholdItems()
+					TriggerServerEvent("inventory:server:OpenInventory", "crafting", math.random(1, 99), crafting)
+				end
+			end
+		end
+
+		if not inRange then
+			Citizen.Wait(1000)
+		end
+
+		Citizen.Wait(3)
+	end
+end)
+
+
+Citizen.CreateThread(function()
+	while true do
+		local pos = GetEntityCoords(PlayerPedId())
+		local inRange = false
 		local distance = #(pos - vector3(Config.AttachmentCrafting["location"].x, Config.AttachmentCrafting["location"].y, Config.AttachmentCrafting["location"].z))
 
 		if distance < 10 then
@@ -95,6 +123,47 @@ Citizen.CreateThread(function()
 		Citizen.Wait(3)
 	end
 end)
+
+function GetAGThreshholdItems()
+	AdvanceGarageItemsInfo()
+	local items = {}
+	for k, item in pairs(Config.AdvanceGarageCrafting["items"]) do
+		if QBCore.Functions.GetPlayerData().metadata["craftingrep"] >= Config.AdvanceGarageCrafting["items"][k].threshold then
+			items[k] = Config.AdvanceGarageCrafting["items"][k]
+		end
+	end
+	return items
+end
+
+function AdvanceGarageItemsInfo()
+	itemInfos = {
+		[1] = {costs = QBCore.Shared.Items["metalscrap"]["label"] .. ": 140x, " .. QBCore.Shared.Items["steel"]["label"] .. ": 250x, " .. QBCore.Shared.Items["rubber"]["label"] .. ": 60x"},
+		[2] = {costs = QBCore.Shared.Items["metalscrap"]["label"] .. ": 165x, " .. QBCore.Shared.Items["steel"]["label"] .. ": 285x, " .. QBCore.Shared.Items["rubber"]["label"] .. ": 75x"},
+	}
+
+	local items = {}
+	for k, item in pairs (Config.AdvanceGarageCrafting["items"]) do
+			local itemInfo = QBCore.Shared.Items[item.name:lower()]
+			items[item.slot] = {
+				name = itemInfo["name"],
+				amount = tonumber(item.amount),
+				info = itemInfos[item.slot],
+				label = itemInfo["label"],
+				description = itemInfo["description"] ~= nil and itemInfo["description"] or "",
+				weight = itemInfo["weight"], 
+				type = itemInfo["type"], 
+				unique = itemInfo["unique"], 
+				useable = itemInfo["useable"], 
+				image = itemInfo["image"],
+				slot = item.slot,
+				costs = item.costs,
+				threshold = item.threshold,
+				points = item.points,
+			}
+		end
+		Config.AdvanceGarageCrafting["items"] = items
+	end
+	
 
 function GetThresholdItems()
 	ItemsToItemInfo()
